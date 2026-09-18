@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { User, Edit3, Check, Image as ImageIcon, Play, GitFork, ExternalLink, Link as LinkIcon, Save, X, KeyRound, Mail, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { User, Edit3, Check, Image as ImageIcon, Play, GitFork, ExternalLink, Link as LinkIcon, Save, X, KeyRound, Mail, AlertTriangle, ShieldCheck, Loader2 } from 'lucide-react';
 import { DEFAULT_8VALUES_TEST } from '../utils/default8values';
 import { TestCard } from './TestCard';
 import { ConfirmModal } from './ConfirmModal';
 import { ImageCropperModal } from './Studio/ImageCropperModal';
+import { Spinner } from './Spinner';
 
 export function ProfilePage({ username, user, authToken, onUserUpdate, onSelectTest, onEditTest, onGoBack }) {
   const [profile, setProfile] = useState(null);
@@ -276,7 +277,11 @@ export function ProfilePage({ username, user, authToken, onUserUpdate, onSelectT
   };
 
   if (loading) {
-    return <div className="container" style={{ textAlign: 'center', marginTop: '4rem' }}>Loading profile...</div>;
+    return (
+      <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '50vh' }}>
+        <Spinner size={44} />
+      </div>
+    );
   }
 
   if (!profile) {
@@ -347,8 +352,8 @@ export function ProfilePage({ username, user, authToken, onUserUpdate, onSelectT
                   />
               </div>
               <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', marginTop: '1rem' }}>
-                <button className="btn btn-primary" onClick={saveProfile} disabled={saving}>
-                  <Save size={16} /> {saving ? 'Saving...' : 'Save Profile'}
+                <button className="btn btn-primary" onClick={saveProfile} disabled={saving} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: '120px' }}>
+                  {saving ? <Loader2 className="animate-spin" size={16} /> : <><Save size={16} /> Save Profile</>}
                 </button>
                 <button className="btn btn-secondary" onClick={() => setIsEditing(false)} disabled={saving}>
                   <X size={16} /> Cancel
@@ -529,8 +534,9 @@ export function ProfilePage({ username, user, authToken, onUserUpdate, onSelectT
                   setConfirmUsernameModal(true);
                 }}
                 disabled={usernameLoading || !newUsername.trim() || newUsername.trim() === profile.username}
+                style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: '130px' }}
               >
-                {usernameLoading ? 'Saving...' : 'Update Handle'}
+                {usernameLoading ? <Loader2 className="animate-spin" size={16} /> : 'Update Handle'}
               </button>
             </div>
           </div>
@@ -573,8 +579,8 @@ export function ProfilePage({ username, user, authToken, onUserUpdate, onSelectT
                     required
                   />
                 </div>
-                <button type="submit" className="btn btn-primary" disabled={emailLoading}>
-                  {emailLoading ? 'Saving...' : 'Save Email'}
+                <button type="submit" className="btn btn-primary" disabled={emailLoading} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: '110px' }}>
+                  {emailLoading ? <Loader2 className="animate-spin" size={16} /> : 'Save Email'}
                 </button>
               </div>
             </form>
@@ -582,8 +588,8 @@ export function ProfilePage({ username, user, authToken, onUserUpdate, onSelectT
             {profile.email && !profile.emailVerified && (
               <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Didn't receive the verification email?</span>
-                <button className="btn btn-outline btn-sm" onClick={handleResendVerification} disabled={emailLoading}>
-                  Resend Link
+                <button className="btn btn-outline btn-sm" onClick={handleResendVerification} disabled={emailLoading} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: '100px' }}>
+                  {emailLoading ? <Loader2 className="animate-spin" size={14} /> : 'Resend Link'}
                 </button>
               </div>
             )}
@@ -633,8 +639,8 @@ export function ProfilePage({ username, user, authToken, onUserUpdate, onSelectT
                   onChange={e => setConfirmNewPassword(e.target.value)}
                 />
               </div>
-              <button type="submit" className="btn btn-primary" style={{ alignSelf: 'flex-start' }} disabled={passwordLoading}>
-                {passwordLoading ? 'Updating...' : 'Update Password'}
+              <button type="submit" className="btn btn-primary" style={{ alignSelf: 'flex-start', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: '150px' }} disabled={passwordLoading}>
+                {passwordLoading ? <Loader2 className="animate-spin" size={16} /> : 'Update Password'}
               </button>
             </form>
           </div>

@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Play, GitFork, Edit3, Trash2, Download, Sparkles, Globe, User } from 'lucide-react';
+import { Search, Play, GitFork, Edit3, Trash2, Download, Sparkles, Globe, User, Loader2 } from 'lucide-react';
 import { DEFAULT_8VALUES_TEST } from '../utils/default8values';
 import { TestCard } from './TestCard';
+import { Spinner } from './Spinner';
 
 export function ExploreHub({ onSelectTest, onEditTest, user, authToken, onViewProfile }) {
   const [tests, setTests] = useState([]);
   const [search, setSearch] = useState('');
   const [sortMode, setSortMode] = useState('hot');
   const [isSortOpen, setIsSortOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
 
@@ -140,19 +141,29 @@ export function ExploreHub({ onSelectTest, onEditTest, user, authToken, onViewPr
         </div>
       </div>
 
-      {/* Grid of Tests */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem' }}>
-        {filteredTests.map((test) => (
-          <TestCard 
-            key={test.id} 
-            test={test} 
-            isOwner={user && test.ownerId === user.id} 
-            onSelectTest={onSelectTest} 
-            onEditTest={onEditTest} 
-            onViewProfile={onViewProfile} 
-          />
-        ))}
-      </div>
+      {/* Grid of Tests or Loading Throbber */}
+      {loading && tests.length === 0 ? (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '5rem 0', minHeight: '300px' }}>
+          <Spinner size={44} />
+        </div>
+      ) : filteredTests.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '4rem 2rem', background: 'var(--container-bg)', borderRadius: '12px', color: 'var(--text-muted)' }}>
+          {search ? `No tests found matching "${search}".` : 'No community tests found.'}
+        </div>
+      ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem' }}>
+          {filteredTests.map((test) => (
+            <TestCard 
+              key={test.id} 
+              test={test} 
+              isOwner={user && test.ownerId === user.id} 
+              onSelectTest={onSelectTest} 
+              onEditTest={onEditTest} 
+              onViewProfile={onViewProfile} 
+            />
+          ))}
+        </div>
+      )}
 
       {/* Load More */}
       {hasMore && !search && (
@@ -161,9 +172,9 @@ export function ExploreHub({ onSelectTest, onEditTest, user, authToken, onViewPr
             className="btn btn-secondary"
             onClick={() => fetchTests(page + 1, true)}
             disabled={loading}
-            style={{ padding: '0.75rem 2rem' }}
+            style={{ padding: '0.75rem 2rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: '120px' }}
           >
-            {loading ? 'Loading...' : 'Load More'}
+            {loading ? <Loader2 className="animate-spin" size={18} /> : 'Load More'}
           </button>
         </div>
       )}

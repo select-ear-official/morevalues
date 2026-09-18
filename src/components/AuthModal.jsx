@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, ArrowLeft, Mail, CheckCircle2 } from 'lucide-react';
+import { X, ArrowLeft, Mail, CheckCircle2, Loader2 } from 'lucide-react';
 
 export function AuthModal({ onClose, onLoginSuccess, initialView = 'login', initialResetToken = null }) {
   const [view, setView] = useState(initialView); // 'login' | 'register' | 'forgot' | 'reset'
@@ -258,8 +258,10 @@ export function AuthModal({ onClose, onLoginSuccess, initialView = 'login', init
             </>
           )}
 
-          <button type="submit" className="btn btn-primary" style={{ marginTop: '0.5rem' }} disabled={loading}>
-            {loading ? 'Processing...' : (
+          <button type="submit" className="btn btn-primary" style={{ marginTop: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '44px' }} disabled={loading}>
+            {loading ? (
+              <Loader2 className="animate-spin" size={18} />
+            ) : (
               view === 'login' ? 'Log In' :
               view === 'register' ? 'Create Account' :
               view === 'forgot' ? 'Send Reset Link' : 'Save New Password'

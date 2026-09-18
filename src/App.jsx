@@ -9,6 +9,7 @@ import { decodeTestFromUrlHash, downloadTestJson, parseTestJsonFile } from './ut
 import { AuthModal } from './components/AuthModal';
 import { ProfilePage } from './components/ProfilePage';
 import { useTestHistory } from './hooks/useTestHistory';
+import { FullscreenSpinner } from './components/Spinner';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('explore');
@@ -17,6 +18,7 @@ export default function App() {
   const [isThemeEditMode, setIsThemeEditMode] = useState(false);
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [viewingUsername, setViewingUsername] = useState(null);
+  const [globalLoading, setGlobalLoading] = useState(null);
   
   const [user, setUser] = useState(null);
   const [authToken, setAuthToken] = useState(null);
@@ -180,6 +182,7 @@ export default function App() {
           setCurrentTest(DEFAULT_8VALUES_TEST);
           setActiveTab('play');
         } else {
+          setGlobalLoading('Loading quiz...');
           fetch(`/api/tests/by-slug/${username}/${slug}`)
             .then(r => r.json())
             .then(data => {
@@ -191,7 +194,8 @@ export default function App() {
                 setActiveTab('play');
               }
             })
-            .catch(err => console.error("Error loading server test slug:", err));
+            .catch(err => console.error("Error loading server test slug:", err))
+            .finally(() => setGlobalLoading(null));
         }
       } else if (hash && hash.includes('#test=')) {
         // Fallback for compressed string payload URLs
@@ -234,6 +238,7 @@ export default function App() {
       setActiveTab('play');
       return;
     }
+    setGlobalLoading('Loading quiz...');
     try {
       const res = await fetch(`/api/tests/${testSummary.id}`);
       const data = await res.json();
@@ -251,6 +256,8 @@ export default function App() {
       }
     } catch (err) {
       alert('Could not connect to server.');
+    } finally {
+      setGlobalLoading(null);
     }
   };
 
@@ -261,6 +268,7 @@ export default function App() {
       setActiveTab('studio');
       return;
     }
+    setGlobalLoading('Opening in Creator...');
     try {
       const res = await fetch(`/api/tests/${testSummary.id}`);
       const data = await res.json();
@@ -277,6 +285,8 @@ export default function App() {
       }
     } catch (err) {
       alert('Could not connect to server.');
+    } finally {
+      setGlobalLoading(null);
     }
   };
 
@@ -309,6 +319,8 @@ export default function App() {
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }} className={isThemeEditMode ? 'theme-edit-mode' : ''}>
+      {globalLoading && <FullscreenSpinner text={globalLoading} />}
+      
       <Navbar 
         activeTab={activeTab} 
         setActiveTab={setActiveTab} 

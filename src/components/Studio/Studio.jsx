@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Download, Upload, Play, Globe, RotateCcw, Save, Check, Palette, Image as ImageIcon, Trash2, Undo2, Redo2, X, AlertTriangle } from 'lucide-react';
+import { Download, Upload, Play, Globe, RotateCcw, Save, Check, Palette, Image as ImageIcon, Trash2, Undo2, Redo2, X, AlertTriangle, Loader2 } from 'lucide-react';
 import { AxisEditor } from './AxisEditor';
 import { QuestionEditor } from './QuestionEditor';
 import { IdeologyEditor } from './IdeologyEditor';
@@ -179,16 +179,20 @@ export function Studio({ test, setTest, onPlayTest, onPublish, isThemeEditMode, 
             </button>
           </div>
 
-          <button className="btn btn-secondary btn-sm" onClick={() => handlePublishClick(true)} disabled={publishing}>
-            <Save size={16} /> {publishing ? 'Saving...' : 'Save Draft'}
+          <button className="btn btn-secondary btn-sm" onClick={() => handlePublishClick(true)} disabled={publishing} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: '110px' }}>
+            {publishing ? <Loader2 className="animate-spin" size={16} /> : <><Save size={16} /> Save Draft</>}
           </button>
           
-          <button className="btn btn-success btn-sm" onClick={onPlayTest}>
+          <button className="btn btn-success btn-sm" onClick={onPlayTest} disabled={publishing}>
             <Play size={16} /> Demo Test
           </button>
 
-          <button className="btn btn-primary btn-sm" onClick={() => handlePublishClick(false)} disabled={publishing}>
-            <Globe size={16} /> {publishing ? 'Publishing...' : (test.ownerId && (!user || test.ownerId !== user.id) ? 'Fork & Publish' : 'Publish')}
+          <button className="btn btn-primary btn-sm" onClick={() => handlePublishClick(false)} disabled={publishing} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: '100px' }}>
+            {publishing ? (
+              <Loader2 className="animate-spin" size={16} />
+            ) : (
+              <><Globe size={16} /> {test.ownerId && (!user || test.ownerId !== user.id) ? 'Fork & Publish' : 'Publish'}</>
+            )}
           </button>
         </div>
       </div>
